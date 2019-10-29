@@ -29,20 +29,21 @@ public:
     void CalculateProbabilityAt(int row, int col, int num_class);
     void UpdatePriors(int num_images);
     void OutputProbabilities();
-    friend std::ofstream &operator<<(std::ofstream &out, Model &model) {
+    friend std::ofstream &operator<<(std::ofstream &out, Training &trainer) {
+        Model model1 = trainer.model;
         double temp_unshaded;
         double temp_shaded;
-        for (int char_num = 0; char_num < IMAGE_SIZE; char_num++) {
-            for (int line_num = 0; line_num < IMAGE_SIZE; line_num++) {
-                for (int num_class = 0; num_class < NUM_CLASSES; num_class++) {
-                    temp_unshaded = model.probs[char_num][line_num][num_class][0];
-                    temp_shaded = model.probs[char_num][line_num][num_class][1];
+        for (auto & prob : model1.probs) {
+            for (auto & line_num : prob) {
+                for (auto & num_class : line_num) {
+                    temp_unshaded = num_class[0];
+                    temp_shaded = num_class[1];
                     out << temp_unshaded << " " << temp_shaded << std::endl;
                 }
             }
         }
-        for (int prior : model.priors) {
-            out << prior << std::endl;
+        for (int prior : model1.priors) {
+            out << prior << " " << std::endl;
         }
         return out;
     }
