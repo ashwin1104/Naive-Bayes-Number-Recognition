@@ -4,6 +4,8 @@
 #endif //NAIVEBAYES_TRAINING_MODEL_H
 
 #include <string>
+#include <iostream>
+#include <fstream>
 #include "image.hpp"
 #include "model.hpp"
 
@@ -24,7 +26,21 @@ public:
     void SetCurrentImage();
     void UpdateProbs();
     void UpdateAllProbabilities();
-    void CalculateProbabilityAt(int row, int col, int num_class, int temp_count_unshaded, int temp_count_shaded);
+    void CalculateProbabilityAt(int row, int col, int num_class);
     void OutputProbabilities();
+    friend std::ofstream &operator<<(std::ofstream &out, Model &model) {
+        double temp_unshaded;
+        double temp_shaded;
+        for (int char_num = 0; char_num < IMAGE_SIZE; char_num++) {
+            for (int line_num = 0; line_num < IMAGE_SIZE; line_num++) {
+                for (int num_class = 0; num_class < NUM_CLASSES; num_class++) {
+                    temp_unshaded = model.probs[char_num][line_num][num_class][0];
+                    temp_shaded = model.probs[char_num][line_num][num_class][1];
+                    out << temp_unshaded << " " << temp_shaded << std::endl;
+                }
+            }
+        }
+        return out;
+    }
 };
 
