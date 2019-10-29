@@ -88,6 +88,5 @@ void Training::UpdatePriors(int num_images) {
 
 void Training::OutputProbabilities() {
     std::ofstream outfile("training-data.txt");
-    Model model1 = Model();
     outfile << *this;
 }

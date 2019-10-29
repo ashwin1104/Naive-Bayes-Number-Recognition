@@ -17,12 +17,14 @@ public:
     Validate(std::string &images, std::string &labels);
     bool ValidateImage();
     bool ValidateLabel();
-    bool ValImageNumLines();
-    bool ValImageNumCharsInLine(std::string &line);
     bool ValImageTypeChars(std::string &line);
+    bool ValImageNumCharsInLine(std::string &line);
+    bool ValImageNumLines();
     bool ValLabelTypeChars(std::string &line);
     bool ValLabelNumChars(std::string &line);
     bool ValLabelNumLines();
     void SetValImageChars();
     void SetValLabelChars();
+    std::string GetImagesFile();
+    std::string GetLabelsFile();
 };

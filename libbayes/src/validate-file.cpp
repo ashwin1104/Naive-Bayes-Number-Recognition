@@ -1,5 +1,4 @@
 #include <fstream>
-#include <iostream>
 #include "validate-file.h"
 #include "model.hpp"
 Validate::Validate(std::string &images) {
@@ -64,6 +63,9 @@ bool Validate::ValImageNumCharsInLine(std::string &line) {
     return line.length() == 28;
 }
 bool Validate::ValImageTypeChars(std::string &line) {
+    if (line.empty()) {
+        return false;
+    }
     for (char c : line) {
         if (valid_image_chars.find(c) == valid_image_chars.end()) {
             return false;
@@ -71,11 +73,15 @@ bool Validate::ValImageTypeChars(std::string &line) {
     }
     return true;
 }
-bool Validate::ValLabelTypeChars(std::string &line) {
-    return valid_label_chars.find(line[0]) != valid_label_chars.end();
-}
+
 bool Validate::ValLabelNumChars(std::string &line) {
     return line.length() == 1;
+}
+bool Validate::ValLabelTypeChars(std::string &line) {
+    if (line.empty()) {
+        return false;
+    }
+    return valid_label_chars.find(line[0]) != valid_label_chars.end();
 }
 bool Validate::ValLabelNumLines() {
     return label_num_lines*28 == image_num_lines;
@@ -91,4 +97,10 @@ void Validate::SetValLabelChars() {
         temp_valid_char = valid_int + '0';
         valid_label_chars.insert(temp_valid_char);
     }
+}
+std::string Validate::GetImagesFile() {
+    return images_file_path;
+}
+std::string Validate::GetLabelsFile() {
+    return labels_file_path;
 }
