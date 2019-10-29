@@ -2,3 +2,6 @@
 #define NAIVEBAYES_VALIDATE_FILE_H
 
 #endif //NAIVEBAYES_VALIDATE_FILE_H
+class ValidateFile {
+
+};

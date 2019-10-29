@@ -7,11 +7,15 @@ Training::Training(std::string &training_images, std::string &training_labels) {
     model = Model();
     k = 2;
 }
+
 void Training::RunTraining() {
+    int num_total_images = 0;
     while (ReadNextImage() && SetNextClass()) {
+        num_total_images += 1;
         SetCurrentImage();
         UpdateProbs();
     }
+    UpdatePriors(num_total_images);
     UpdateAllProbabilities();
     OutputProbabilities();
 }
@@ -73,6 +77,14 @@ void Training::CalculateProbabilityAt(int row, int col, int num_class) {
     model.probs[row][col][num_class][0] = prob_unshaded;
     model.probs[row][col][num_class][1] = prob_shaded;
 }
+
+void Training::UpdatePriors(int num_images) {
+    int num_images_for_class = 0;
+    for (int num_class = 0; num_class < NUM_CLASSES; num_class++) {
+        num_images_for_class = model.probs[0][0][num_class][0] + model.probs[0][0][num_class][1];
+        model.priors.push_back(num_images_for_class/num_class);
+    }
+};
 
 void Training::OutputProbabilities() {
     std::ofstream outfile("training-data.txt");

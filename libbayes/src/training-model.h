@@ -6,7 +6,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
-#include "image.hpp"
+#include <vector>
 #include "model.hpp"
 
 class Training {
@@ -27,6 +27,7 @@ public:
     void UpdateProbs();
     void UpdateAllProbabilities();
     void CalculateProbabilityAt(int row, int col, int num_class);
+    void UpdatePriors(int num_images);
     void OutputProbabilities();
     friend std::ofstream &operator<<(std::ofstream &out, Model &model) {
         double temp_unshaded;
@@ -39,6 +40,9 @@ public:
                     out << temp_unshaded << " " << temp_shaded << std::endl;
                 }
             }
+        }
+        for (int prior : model.priors) {
+            out << prior << std::endl;
         }
         return out;
     }
