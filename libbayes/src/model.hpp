@@ -37,4 +37,5 @@ struct Model {
     // probs[0][0][0][1] is the computed probability that a pixel at
     // [0][0] for class 0 is shaded.
     double probs[IMAGE_SIZE][IMAGE_SIZE][NUM_CLASSES][2];
+
 };

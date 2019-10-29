@@ -1,3 +1,4 @@
 cmake-*
 *.o
 .idea/
+/Users/ashwinsaxena/CLionProjects/naive-numbers-ashwin1104/libbayes/test/resources/digitdata
