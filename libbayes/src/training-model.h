@@ -13,6 +13,7 @@ private:
     Image current_image;
     Model model;
     int current_number_class;
+    int k;
     std::string training_images_file;
     std::string training_labels_file;
 public:
@@ -23,7 +24,7 @@ public:
     void SetCurrentImage();
     void UpdateProbs();
     void UpdateAllProbabilities();
-    double CalculateProbability(int row, int col, int num_class);
+    void CalculateProbabilityAt(int row, int col, int num_class, int temp_count_unshaded, int temp_count_shaded);
     void OutputProbabilities();
 };
 

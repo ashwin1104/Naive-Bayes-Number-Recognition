@@ -5,6 +5,7 @@ Training::Training(std::string &training_images, std::string &training_labels) {
     training_images_file = training_images;
     training_labels_file = training_labels;
     model = Model();
+    k = 2;
 }
 void Training::RunTraining() {
     while (ReadNextImage() && SetNextClass()) {
@@ -12,6 +13,7 @@ void Training::RunTraining() {
         UpdateProbs();
     }
     UpdateAllProbabilities();
+    OutputProbabilities();
 }
 bool Training::ReadNextImage() {
     raw_image = "";
@@ -54,11 +56,27 @@ void Training::UpdateProbs() {
     }
 }
 void Training::UpdateAllProbabilities() {
-
+    int temp_count_unshaded;
+    int temp_count_shaded;
+    for (int char_num = 0; char_num < IMAGE_SIZE; char_num++) {
+        for (int line_num = 0; line_num < IMAGE_SIZE; line_num++) {
+            for (int num_class = 0; num_class < NUM_CLASSES; num_class++) {
+                temp_count_unshaded = model.probs[char_num][line_num][num_class][0];
+                temp_count_shaded = model.probs[char_num][line_num][num_class][1];
+                CalculateProbabilityAt(char_num, line_num,
+                                           num_class, temp_count_unshaded, temp_count_shaded);
+            }
+        }
+    }
 }
-double Training::CalculateProbability(int row, int col, int num_class) {
-
+void Training::CalculateProbabilityAt(int row, int col, int num_class, int temp_count_unshaded, int temp_count_shaded) {
+    int temp_train_example_count = temp_count_unshaded + temp_count_shaded;
+    double prob_unshaded = ((double)(k + temp_count_unshaded))/((double)(2*k + temp_train_example_count));
+    double prob_shaded = 1 - prob_unshaded;
+    model.probs[row][col][num_class][0] = prob_unshaded;
+    model.probs[row][col][num_class][1] = prob_shaded;
 }
+
 void Training::OutputProbabilities() {
 
 }
