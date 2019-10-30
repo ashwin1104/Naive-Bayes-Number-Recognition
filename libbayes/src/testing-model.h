@@ -18,9 +18,9 @@ private:
     double current_shaded_prob;
     int correct_class;
     Image current_image;
-    double class_probabilities[NUM_CLASSES];
     int winning_digit;
 public:
+    double class_probabilities[NUM_CLASSES];
     // constructor
     Tester(std::string &image_file_path, std::string &label_file_path);
 
@@ -31,7 +31,7 @@ public:
     bool ReadNextImage(std::ifstream &infile);
 
     // reads from label_path to get the class corresponding to the current image
-    bool SetNextClass(std::ifstream &infile2);
+    bool SetCurrentClass(std::ifstream &infile2);
 
     // uses raw string from ReadNextImage to create an image object that handles the same information nicely
     void SetCurrentImage();
@@ -56,4 +56,8 @@ public:
 
     // sets the winning digit based on the highest posterior probability (max function)
     void UpdateWinningDigit();
+
+    // getters
+    std::string GetRawImage();
+    int GetCurrentClass();
 };

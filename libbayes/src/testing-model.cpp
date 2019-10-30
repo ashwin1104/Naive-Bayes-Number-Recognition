@@ -15,7 +15,7 @@ void Tester::RunTester() {
     std::ifstream infile2(label_path);
 
     // loops through each image
-    while (ReadNextImage(infile) && SetNextClass(infile2)) {
+    while (ReadNextImage(infile) && SetCurrentClass(infile2)) {
         std::ifstream infile3(probabilities_path);
 
         InitializeClassProbs();
@@ -48,7 +48,7 @@ bool Tester::ReadNextImage(std::ifstream &infile) {
     return true;
 }
 
-bool Tester::SetNextClass(std::ifstream &infile2) {
+bool Tester::SetCurrentClass(std::ifstream &infile2) {
     std::string line;
     std::getline(infile2, line);
     if (line.empty()) {
@@ -135,4 +135,10 @@ void Tester::SplitString(std::string &line) {
     shaded_str = line.substr(space_index + 1);
     current_unshaded_prob = std::stod (unshaded_str);
     current_shaded_prob = std::stod (shaded_str);
+}
+std::string Tester::GetRawImage() {
+    return raw_image;
+}
+int Tester::GetCurrentClass() {
+    return correct_class;
 }

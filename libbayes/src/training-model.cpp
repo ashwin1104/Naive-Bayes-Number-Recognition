@@ -14,7 +14,7 @@ void Training::RunTraining() {
     std::ifstream infile2(training_labels_file);
 
     // loops through each image
-    while (ReadNextImage(infile) && SetNextClass(infile2)) {
+    while (ReadNextImage(infile) && SetCurrentClass(infile2)) {
         SetCurrentImage();
         UpdateCounts();
         num_total_images += 1;
@@ -39,7 +39,7 @@ bool Training::ReadNextImage(std::ifstream &infile) {
     }
     return true;
 }
-bool Training::SetNextClass(std::ifstream &infile2) {
+bool Training::SetCurrentClass(std::ifstream &infile2) {
     std::string line;
     std::getline(infile2, line);
     if (line.empty()) {
@@ -94,10 +94,6 @@ void Training::UpdatePriors(int num_images) {
         num_images_for_class = model.probs[0][0][num_class][0] + model.probs[0][0][num_class][1];
         model.priors.push_back(num_images_for_class/num_images);
     }
-
-    for (double prior : model.priors) {
-        std::cout << prior << " " << std::endl;
-    }
 };
 
 void Training::OutputProbabilities() {
@@ -110,3 +106,14 @@ void Training::OutputProbabilities() {
     }
     else std::cout << "Unable to open file";
 }
+
+std::string Training::GetRawImage() {
+    return raw_image;
+}
+int Training::GetCurrentClass() {
+    return current_number_class;
+}
+Model Training::GetModel() {
+    return model;
+}
+
