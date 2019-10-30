@@ -21,6 +21,7 @@ int main(int argc, char* argv[]) {
         training_labels_file = argv[3];
         Validate validator = Validate(training_images_file, training_labels_file);
         if (validator.ValidateImage() && validator.ValidateLabel()) {
+            std::cout << "hi" << std::endl;
             Training trainer = Training(training_images_file, training_labels_file);
             trainer.RunTraining();
         }

@@ -21,8 +21,8 @@ private:
 public:
     Training(std::string &training_images, std::string &training_labels);
     void RunTraining();
-    bool ReadNextImage();
-    bool SetNextClass();
+    bool ReadNextImage(std::ifstream &infile);
+    bool SetNextClass(std::ifstream &infile2);
     void SetCurrentImage();
     void UpdateProbs();
     void UpdateAllProbabilities();
@@ -30,19 +30,20 @@ public:
     void UpdatePriors(int num_images);
     void OutputProbabilities();
     friend std::ofstream &operator<<(std::ofstream &out, Training &trainer) {
-        Model model1 = trainer.model;
         double temp_unshaded;
         double temp_shaded;
-        for (auto & prob : model1.probs) {
+        for (auto & prob : trainer.model.probs) {
             for (auto & line_num : prob) {
                 for (auto & num_class : line_num) {
                     temp_unshaded = num_class[0];
                     temp_shaded = num_class[1];
+                    std::cout << temp_unshaded << " " << temp_shaded << std::endl;
                     out << temp_unshaded << " " << temp_shaded << std::endl;
                 }
             }
         }
-        for (int prior : model1.priors) {
+        for (double prior : trainer.model.priors) {
+            std::cout << prior << " " << std::endl;
             out << prior << " " << std::endl;
         }
         return out;

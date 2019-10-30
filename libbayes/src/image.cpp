@@ -1,5 +1,6 @@
 #include "image.hpp"
 #include <string>
+#include <iostream>
 
 void Image::ParseImage(std::string current_image) {
     for (int char_num = 0; char_num < IMAGE_SIZE; char_num++) {
