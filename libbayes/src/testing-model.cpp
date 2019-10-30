@@ -9,37 +9,58 @@ Tester::Tester(std::string &image_file_path, std::string &label_file_path, std::
 void Tester::RunTester() {
     int num_total_images = 0;
     int num_correct_images = 0;
+
     std::ifstream infile(image_path);
     std::ifstream infile2(label_path);
-    std::ifstream infile3(probabilities_path);
+
     while (ReadNextImage(infile) && SetNextClass(infile2)) {
+        std::ifstream infile3(probabilities_path);
+
         InitializeClassProbs();
         SetCurrentImage();
         UpdateProbs(infile3);
         UsePriors(infile3);
         UpdateWinningDigit();
+
         if (winning_digit == correct_class) {
             num_correct_images++;
         }
         num_total_images++;
+        infile3.close();
     }
-    std::cout << CalculateAccuracy(num_correct_images, num_total_images) << std::endl;
-}
-void Tester::UpdateWinningDigit() {
-    int max_class = -1;
-    double max_value = -1;
-    for (int num_class = 0; num_class < NUM_CLASSES; num_class++) {
-        if (class_probabilities[num_class] > max_value) {
-            max_value = class_probabilities[num_class];
-            max_class = num_class;
-        }
-    }
-    winning_digit = max_class;
+    infile.close();
+    infile2.close();
+    std::cout << "Accuracy of Model: " << CalculateAccuracy(num_correct_images, num_total_images) << std::endl;
 }
 
-double Tester::CalculateAccuracy(int num_correct, int num_total) {
-    return ((double) num_correct)/((double) num_total);
+bool Tester::ReadNextImage(std::ifstream &infile) {
+    raw_image = "";
+    std::string line;
+    for (int line_num = 0; line_num < IMAGE_SIZE; line_num++) {
+        std::getline(infile, line);
+        if (line.empty()) {
+            return false;
+        }
+        raw_image += line;
+    }
+    return true;
 }
+
+bool Tester::SetNextClass(std::ifstream &infile2) {
+    std::string line;
+    std::getline(infile2, line);
+    if (line.empty()) {
+        return false;
+    }
+    correct_class = line[0] - '0';
+    return true;
+}
+
+void Tester::SetCurrentImage() {
+    current_image = Image();
+    current_image.ParseImage(raw_image);
+}
+
 void Tester::UpdateProbs(std::ifstream &infile3) {
     std::string line;
     bool temp_is_shaded;
@@ -54,30 +75,15 @@ void Tester::UpdateProbs(std::ifstream &infile3) {
         }
     }
 }
+
 void Tester::UsePriors(std::ifstream &infile3) {
     std::string line;
     double current_prior;
-    for (int num_class = 0; num_class < NUM_CLASSES; num_class++) {
+    for (double & class_probabilitie : class_probabilities) {
         std::getline(infile3, line);
         current_prior = std::stod (line);
-        class_probabilities[num_class] += log (current_prior);
+        class_probabilitie += log (current_prior);
     }
-}
-
-void Tester::SplitString(std::string &line) {
-    std::string unshaded_str;
-    std::string shaded_str;
-    int space_index;
-    for (int char_num = 0; char_num < line.length(); char_num++) {
-        if (line[char_num] == ' ') {
-            space_index = char_num;
-            break;
-        }
-    }
-    unshaded_str = line.substr(0, space_index);
-    shaded_str = line.substr(space_index);
-    current_unshaded_prob = std::stod (unshaded_str);
-    current_shaded_prob = std::stod (shaded_str);
 }
 
 void Tester::UpdateProbForClass(int num_class, bool isShaded) {
@@ -88,33 +94,41 @@ void Tester::UpdateProbForClass(int num_class, bool isShaded) {
         class_probabilities[num_class] += log (current_unshaded_prob);
     }
 }
-bool Tester::ReadNextImage(std::ifstream &infile) {
-    raw_image = "";
-    std::string line;
-    for (int line_num = 0; line_num < IMAGE_SIZE; line_num++) {
-        std::getline(infile, line);
-        if (line.empty()) {
-            return false;
+
+void Tester::UpdateWinningDigit() {
+    int max_class = -1;
+    double max_value = -DBL_MAX;
+    for (int num_class = 0; num_class < NUM_CLASSES; num_class++) {
+        if (class_probabilities[num_class] > max_value) {
+            max_value = class_probabilities[num_class];
+            max_class = num_class;
         }
-        raw_image += line;
     }
-    return true;
+    winning_digit = max_class;
 }
-bool Tester::SetNextClass(std::ifstream &infile2) {
-    std::string line;
-    std::getline(infile2, line);
-    if (line.empty()) {
-        return false;
-    }
-    correct_class = line[0] - '0';
-    return true;
+
+double Tester::CalculateAccuracy(int num_correct, int num_total) {
+    return ((double) num_correct)/((double) num_total);
 }
-void Tester::SetCurrentImage() {
-    current_image = Image();
-    current_image.ParseImage(raw_image);
-}
+
 void Tester::InitializeClassProbs() {
     for (double & class_probability : class_probabilities) {
         class_probability = 1;
     }
+}
+
+void Tester::SplitString(std::string &line) {
+    std::string unshaded_str;
+    std::string shaded_str;
+    int space_index = 0;
+    for (char c : line) {
+        if (c == ' ') {
+            break;
+        }
+        space_index++;
+    }
+    unshaded_str = line.substr(0, space_index);
+    shaded_str = line.substr(space_index + 1);
+    current_unshaded_prob = std::stod (unshaded_str);
+    current_shaded_prob = std::stod (shaded_str);
 }

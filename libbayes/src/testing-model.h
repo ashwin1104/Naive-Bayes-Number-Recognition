@@ -1,6 +1,7 @@
 #include <string>
 #include "model.hpp"
-#include <math.h>
+#include <cmath>
+#include <cfloat>
 #include <iostream>
 #ifndef NAIVEBAYES_TESTING_MODEL_H
 #define NAIVEBAYES_TESTING_MODEL_H
