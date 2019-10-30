@@ -16,17 +16,12 @@ void Training::RunTraining() {
         SetCurrentImage();
         UpdateProbs();
         num_total_images += 1;
-        std::cout << num_total_images << std::endl;
     }
     infile.close();
     infile2.close();
-    std::cout << "hi2" << std::endl;
     UpdatePriors(num_total_images);
-    std::cout << "hi3" << std::endl;
     UpdateAllProbabilities();
-    std::cout << "hi4" << std::endl;
     OutputProbabilities();
-    std::cout << "hi5" << std::endl;
 }
 bool Training::ReadNextImage(std::ifstream &infile) {
     raw_image = "";
