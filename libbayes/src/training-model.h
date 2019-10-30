@@ -19,16 +19,37 @@ private:
     std::string training_images_file;
     std::string training_labels_file;
 public:
+    // constructor
     Training(std::string &training_images, std::string &training_labels);
+
+    // main engine for training the model
     void RunTraining();
+
+    // reads from image_path to get the IMAGE_SIZE length string defining the image
     bool ReadNextImage(std::ifstream &infile);
+
+    // reads from training_labels_file to get the class corresponding to the current image
     bool SetNextClass(std::ifstream &infile2);
+
+    // uses raw string from ReadNextImage to create an image object that handles the same information nicely
     void SetCurrentImage();
-    void UpdateProbs();
+
+    // updates the counts of shaded and unshaded pixels for each pixel given the class
+    void UpdateCounts();
+
+    // engine for updating all the probabilities of pixels being shaded or unshaded
     void UpdateAllProbabilities();
+
+    // updates the probability of a given pixel being shaded or unshaded given the class
     void CalculateProbabilityAt(int row, int col, int num_class);
+
+    // updates the probabilities of each class being chosen given an image
     void UpdatePriors(int num_images);
+
+    // outputs all probabilities and priors to a file
     void OutputProbabilities();
+
+    // overloaded ofstream operator to output model.probs data to a file
     friend std::ofstream &operator<<(std::ofstream &out, Training &trainer) {
         double temp_unshaded;
         double temp_shaded;

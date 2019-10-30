@@ -1,6 +1,7 @@
 add_executable(libbayes-tests
         main.cpp test-validate.cpp test-training.cpp test-classification.cpp test-image.cpp
-        test-validate.cpp ../src/validate-file.cpp test-image.cpp ../src/image.cpp)
+        test-validate.cpp ../src/validate-file.cpp test-image.cpp ../src/image.cpp test-training.cpp
+        ../src/training-model.cpp test-classification.cpp ../src/testing-model.cpp)
 target_include_directories(libbayes-tests PRIVATE ./)
 
 target_link_libraries(libbayes-tests libbayes)

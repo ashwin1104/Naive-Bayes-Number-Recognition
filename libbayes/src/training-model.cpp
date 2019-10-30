@@ -12,13 +12,17 @@ void Training::RunTraining() {
     int num_total_images = 0;
     std::ifstream infile(training_images_file);
     std::ifstream infile2(training_labels_file);
+
+    // loops through each image
     while (ReadNextImage(infile) && SetNextClass(infile2)) {
         SetCurrentImage();
-        UpdateProbs();
+        UpdateCounts();
         num_total_images += 1;
     }
+
     infile.close();
     infile2.close();
+
     UpdatePriors(num_total_images);
     UpdateAllProbabilities();
     OutputProbabilities();
@@ -49,7 +53,7 @@ void Training::SetCurrentImage() {
     current_image.ParseImage(raw_image);
 }
 
-void Training::UpdateProbs() {
+void Training::UpdateCounts() {
     for (int char_num = 0; char_num < IMAGE_SIZE; char_num++) {
         for (int line_num = 0; line_num < IMAGE_SIZE; line_num++) {
             if (current_image.GetImagePixelAt(char_num, line_num) == 0) {
@@ -73,27 +77,32 @@ void Training::UpdateAllProbabilities() {
 void Training::CalculateProbabilityAt(int row, int col, int num_class) {
     int temp_count_unshaded = model.probs[row][col][num_class][0];
     int temp_count_shaded = model.probs[row][col][num_class][1];
+
     int temp_train_example_count = temp_count_unshaded + temp_count_shaded;
+
     double prob_unshaded = ((double)(k + temp_count_unshaded))/((double)(2*k + temp_train_example_count));
     double prob_shaded = 1 - prob_unshaded;
+
     model.probs[row][col][num_class][0] = prob_unshaded;
     model.probs[row][col][num_class][1] = prob_shaded;
 }
 
 void Training::UpdatePriors(int num_images) {
     double num_images_for_class = 0;
-    std::cout << "priors num images: " << num_images << std::endl;
+
     for (int num_class = 0; num_class < NUM_CLASSES; num_class++) {
         num_images_for_class = model.probs[0][0][num_class][0] + model.probs[0][0][num_class][1];
         model.priors.push_back(num_images_for_class/num_images);
     }
+
     for (double prior : model.priors) {
         std::cout << prior << " " << std::endl;
     }
 };
 
 void Training::OutputProbabilities() {
-    std::ofstream outfile("/Users/ashwinsaxena/CLionProjects/naive-numbers-ashwin1104/libbayes/src/training-data.txt");
+    std::ofstream outfile("/Users/ashwinsaxena/CLionProjects/"
+                          "naive-numbers-ashwin1104/libbayes/src/training-data.txt");
     if (outfile.is_open())
     {
         outfile << *this;

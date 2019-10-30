@@ -1,10 +1,11 @@
 #include <fstream>
 #include "testing-model.h"
 
-Tester::Tester(std::string &image_file_path, std::string &label_file_path, std::string &probabilities_file_path) {
+Tester::Tester(std::string &image_file_path, std::string &label_file_path) {
     image_path = image_file_path;
     label_path = label_file_path;
-    probabilities_path = probabilities_file_path;
+    // the path that training-model wrote to for probabilities (hardcoded)
+    probabilities_path = "/Users/ashwinsaxena/CLionProjects/naive-numbers-ashwin1104/libbayes/src/training-data.txt";
 }
 void Tester::RunTester() {
     int num_total_images = 0;
@@ -13,6 +14,7 @@ void Tester::RunTester() {
     std::ifstream infile(image_path);
     std::ifstream infile2(label_path);
 
+    // loops through each image
     while (ReadNextImage(infile) && SetNextClass(infile2)) {
         std::ifstream infile3(probabilities_path);
 
@@ -70,6 +72,7 @@ void Tester::UpdateProbs(std::ifstream &infile3) {
             for (int num_class = 0; num_class < NUM_CLASSES; num_class++) {
                 std::getline(infile3, line);
                 SplitString(line);
+                // calls on this function for each pixel, given the class, for the given image
                 UpdateProbForClass(num_class, temp_is_shaded);
             }
         }
@@ -113,7 +116,7 @@ double Tester::CalculateAccuracy(int num_correct, int num_total) {
 
 void Tester::InitializeClassProbs() {
     for (double & class_probability : class_probabilities) {
-        class_probability = 1;
+        class_probability = 0;
     }
 }
 
@@ -121,6 +124,7 @@ void Tester::SplitString(std::string &line) {
     std::string unshaded_str;
     std::string shaded_str;
     int space_index = 0;
+    // splits string by a space
     for (char c : line) {
         if (c == ' ') {
             break;

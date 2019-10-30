@@ -1,4 +1,2 @@
-//
-// Created by Ashwin Saxena on 10/29/19.
-//
-
+#include "testing-model.h"
+#include "catch.hpp"
